@@ -1,0 +1,20 @@
+{
+  "name": "erc-20",
+  "version": "1.0.0",
+  "description": "An ERC-20 Token Implemention",
+  "main": "index.js",
+  "scripts": {
+    "compile": "truffle compile"
+  },
+  "repository": "https://github.com/iknowhtml/erc-20",
+  "author": "Aki Gao",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "web3": "^1.0.0-beta.30"
+  },
+  "devDependencies": {
+    "remixd": "^0.1.5",
+    "truffle": "^4.0.6"
+  }
+}
