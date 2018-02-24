@@ -91,7 +91,6 @@ contract Token is ERC20 {
         Approval(msg.sender, _spender, _value);
 
         return true;
-
     }
 
     /*
