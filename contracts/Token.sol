@@ -9,10 +9,14 @@ contract Token is ERC20 {
 
     /*
     * @dev The name, symbol and decimals state variables are all OPTIONAL parameters for a token.
+    * name: Name of the token.
+    * symbol: Three or four letter symbol for token.
+    * decimal: Degree of precision you want to be able to subdivide tokens.
+    * i.e., 2 decimal places means you can own X.YZ amount of a token.
     */
     string public name;
     string public symbol;
-    strubg public decimals;
+    uint8 public decimals;
 
     uint256 public totalSupply_;
     mapping(address => uint256) public balances;
