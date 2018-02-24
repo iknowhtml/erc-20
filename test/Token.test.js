@@ -1,21 +1,16 @@
 import { assert, expect, should } from 'chai';
-import Web3 from 'web3';
+import web3 from './setupWeb3';
 
 import compiledToken from '../build/contracts/Token.json';
 
-const RPC_SERVER = 'http://localhost:7545';
-const web3 = new Web3(RPC_SERVER);
+import contractFactory from './contractFactory';
 
-let accounts, factory, tokenAddress, token;
+let accounts, token;
 
 beforeEach(async () => {
   accounts = await web3.eth.getAccounts();
 
-  token = await new web3.eth.Contract(compiledToken.abi)
-    .deploy({ data: compiledToken.bytecode })
-    .send({ from: accounts[0], gas: '4700000' });
-
-  token.setProvider(web3.currentProvider);
+  token = await contractFactory(compiledToken);
 });
 
 describe('Token', () => {
