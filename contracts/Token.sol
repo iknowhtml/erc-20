@@ -7,6 +7,13 @@ import "./Uint256Math.sol";
 contract Token is ERC20 {
     using Uint256Math for uint256;
 
+    /*
+    * @dev The name, symbol and decimals state variables are all OPTIONAL parameters for a token.
+    */
+    string public name;
+    string public symbol;
+    strubg public decimals;
+
     uint256 public totalSupply_;
     mapping(address => uint256) public balances;
     mapping(address => mapping(address => uint256)) public allowances;
