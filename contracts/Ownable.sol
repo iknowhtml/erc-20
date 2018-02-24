@@ -22,7 +22,7 @@ contract Ownable {
     function transferOwnership(address _newOwner) public onlyOwner {
         // check to insure that the new owner's address is not 0x0.
         // otherwise, the contract will permanently be unusable.
-        require(newOwner != 0x0);
+        require(_newOwner != 0x0);
 
         owner = _newOwner;
     }
