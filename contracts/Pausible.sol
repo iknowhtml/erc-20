@@ -1,5 +1,7 @@
 pragma solidity ^0.4.19;
 
+import "./Ownable.sol";
+
 
 contract Pausible is Ownable {
     //defaults to false
