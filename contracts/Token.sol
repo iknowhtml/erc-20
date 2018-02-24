@@ -81,6 +81,8 @@ contract Token is ERC20 {
     /**
     * @notice Approves (but does not send) the transfer of tokens from an address
     * @dev `msg.sender` approves `_spender` to spend `_value` tokens
+    * @dev also, be aware of this attack vector:
+    * https://docs.google.com/document/d/1YLPtQxZu1UAvO9cZ1O2RPXBbT0mooh4DYKjA_jp-RLM/edit#heading=h.gmr6zdg47087
     * @param _spender The address of the account able to transfer the tokens
     * @param _value The amount of tokens to be approved for transfer
     * @return Whether the approval was successful or not
