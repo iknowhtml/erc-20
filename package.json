@@ -4,7 +4,8 @@
   "description": "An ERC-20 Token Implemention",
   "main": "index.js",
   "scripts": {
-    "compile": "truffle compile"
+    "compile": "truffle compile",
+    "test": "mocha --require babel-core/register"
   },
   "repository": "https://github.com/iknowhtml/erc-20",
   "author": "Aki Gao",
@@ -14,6 +15,8 @@
     "web3": "^1.0.0-beta.30"
   },
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
     "chai": "^4.1.2",
     "mocha": "^5.0.1",
     "remixd": "^0.1.5",
