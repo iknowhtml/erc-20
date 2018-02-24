@@ -12,17 +12,11 @@
     "complete_strings": {
       "maxLength": 15
     },
-    "node_resolve": {},
     "node": {
       "dontLoad": "",
       "load": "",
       "modules": ""
     },
-    "es_modules": {},
-    "modules": {
-      "dontLoad": "",
-      "load": "",
-      "modules": ""
-    }
+    "es_modules": {}
   }
 }
