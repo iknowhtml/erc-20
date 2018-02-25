@@ -29,8 +29,10 @@ contract Ownable {
         // the owner should not be transfering the contract to himself
         require(_newOwner != owner);
 
-        OwnershipTransfered(_newOwner, owner);
+        address previousOwner = owner;
 
         owner = _newOwner;
+
+        OwnershipTransfered(_newOwner, previousOwner);
     }
 }
