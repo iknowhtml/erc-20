@@ -1,7 +1,7 @@
 pragma solidity ^0.4.19;
 
 /**
- * @dev Math operations with checks to prevent overflows
+ * @dev Math operations with checks to prevent overflows (based on OpenZepplin implementation)
  */
 
 library Uint256Math {
