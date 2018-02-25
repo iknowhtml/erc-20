@@ -32,21 +32,4 @@ library Uint256Math {
 
         return a - b;
     }
-
-    /**
-    * @dev Multiples two numbers, throws if value overflows.
-    * param a Value to be multiplied.
-    * param b Value to multiply.
-    * return Result of multiplying a by b.
-    **/
-    function multiply(uint256 a, uint256 b) internal pure returns (uint256) {
-        uint c = a / b;
-
-        //check to insure that the result did not overflow.
-        assert(c / a == b);
-
-        return c;
-    }
-
-
 }
