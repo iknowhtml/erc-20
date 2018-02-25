@@ -6,7 +6,8 @@
   "scripts": {
     "compile": "truffle compile",
     "test": "mocha --require babel-core/register",
-    "remixd": "remixd -s $(pwd -P)/contracts"
+    "remixd": "remixd -s $(pwd -P)/contracts",
+    "deploy": "truffle migrate"
   },
   "repository": "https://github.com/iknowhtml/erc-20",
   "author": "Aki Gao",
