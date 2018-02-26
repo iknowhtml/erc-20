@@ -178,7 +178,7 @@ describe('Sample Token', () => {
       };
   });
 
-  it('Should not allow an transfer from an approver address to an approvee address that has not been approved yet', async () => {
+  it('Should not allow an transfer from an address to another address that has not been approved yet', async () => {
     'Should approve and transfer to an approved addressed',
       async () => {
         const approverAddress = contractOwner;
