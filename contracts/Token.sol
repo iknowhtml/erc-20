@@ -22,8 +22,8 @@ contract Token is ERC20 {
     mapping(address => uint256) public balances;
     mapping(address => mapping(address => uint256)) public allowances;
 
-    event Transfer(address indexed _from, address indexed _to, uint256 _value);
-    event Approval(address indexed _owner, address indexed _spender, uint256 _value);
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 value);
 
     /**
     * @return The total supply of tokens.
