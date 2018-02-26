@@ -7,13 +7,13 @@ import "./Pausible.sol";
 contract SampleToken is Token, Pausible {
 
     // Parameters for determining characteristics of the token
-    string public constant NAME = "Sample Token";
-    string public constant SYMBOL = "SAMT";
-    uint8 public constant DECIMALS = 18;
-    uint public constant TOKEN_SUPPLY = 100;
+    string private constant NAME = "Sample Token";
+    string private constant SYMBOL = "SAMT";
+    uint8 private constant DECIMALS = 18;
+    uint private constant TOKEN_SUPPLY = 100;
 
     /**
-    * @dev Contructor function for Sample Token.
+    * @dev Constructor function for Sample Token.
     **/
     function SampleToken() public {
         name = NAME;
@@ -21,6 +21,7 @@ contract SampleToken is Token, Pausible {
         decimals = DECIMALS;
         //IMPORTANT: Double check this value to ensure that the operations does not overflow!
         totalSupply_ = TOKEN_SUPPLY * (10 ** uint256(decimals));
+        balances[msg.sender] = totalSupply_;
     }
 
     /**
