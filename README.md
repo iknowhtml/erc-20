@@ -15,15 +15,28 @@ yarn install
 ## Using the Smart contracts
 
 To compile the contracts run the command below:
-``yarn compile```
+
+```
+yarn compile
+```
 
 To run tests please run the command below (please make sure the contracts are compiled first with the above command):
-`yarn test`
+
+```
+yarn test
+```
 
 Finally, to deploy, please run the command below:
-`yarn deploy --network <NETWORK>`
+
+```
+yarn deploy --network <NETWORK>
+```
+
 example:
-`yarn deploy --network ganache`
+
+```
+yarn deploy --network ganache
+```
 
 Additional networks can be added by modifying the `truffle.js` file in the root directory.
 
