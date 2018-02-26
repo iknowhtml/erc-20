@@ -1,4 +1,4 @@
-import { assert, expect, should } from 'chai';
+import { expect } from 'chai';
 import web3 from './setupWeb3';
 
 import compiledOwnable from '../build/contracts/Ownable.json';
@@ -16,22 +16,28 @@ beforeEach(async () => {
 describe('Ownable', () => {
   it('Should initialize an Ownable contract to be owned by the correct owner', async () => {
     const owner = await ownable.methods.owner().call();
-    expect(owner, 'Owner is not correct').to.equal(contractOwner);
+    expect(owner, 'Owner did not match').to.equal(contractOwner);
   });
 
   it('Should transfer ownership to a different owner and emit an OwnershipTransfered event', async () => {
     const newContractOwner = accounts[1];
     const {
-      events: { OwnershipTransfered: { event } },
+      events: {
+        OwnershipTransfered: {
+          event,
+          returnValues: { newOwner, previousOwner },
+        },
+      },
     } = await ownable.methods
       .transferOwnership(newContractOwner)
       .send({ from: contractOwner, gas: '1000000' });
 
-    expect(event, 'Event was not correct').to.equal('OwnershipTransfered');
-
+    expect(event, 'Event did not match').to.equal('OwnershipTransfered');
+    expect(newOwner, 'Owner did not match').to.equal(newContractOwner);
+    expect(previousOwner, 'Owner did not match').to.equal(contractOwner);
     const owner = await ownable.methods.owner().call();
 
-    expect(owner, 'Owner is not correct').to.equal(newContractOwner);
+    expect(owner, 'Owner did not match').to.equal(newContractOwner);
   });
 
   it('Should fail transferring ownership to 0x0', async () => {
@@ -43,7 +49,7 @@ describe('Ownable', () => {
 
     const owner = await ownable.methods.owner().call();
 
-    expect(owner, 'Owner is not correct').to.equal(contractOwner);
+    expect(owner, 'Owner did not match').to.equal(contractOwner);
   });
 
   it('Should fail transferring ownership to current contract owner', async () => {
@@ -55,7 +61,7 @@ describe('Ownable', () => {
 
     const owner = await ownable.methods.owner().call();
 
-    expect(owner, 'Owner is not correct').to.equal(contractOwner);
+    expect(owner, 'Owner did not match').to.equal(contractOwner);
   });
 
   it('Should fail transferring ownership from an account that is not the current contract owner', async () => {
@@ -68,6 +74,6 @@ describe('Ownable', () => {
 
     const owner = await ownable.methods.owner().call();
 
-    expect(owner, 'Owner is not correct').to.equal(contractOwner);
+    expect(owner, 'Owner did not match').to.equal(contractOwner);
   });
 });
