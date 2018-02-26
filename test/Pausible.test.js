@@ -1,4 +1,4 @@
-import { assert, expect, should } from 'chai';
+import { expect } from 'chai';
 import web3 from './setupWeb3';
 
 import compiledPausible from '../build/contracts/Pausible.json';
@@ -26,7 +26,7 @@ describe('Pausible', () => {
       events: { Paused: { event } },
     } = await pausible.methods.pause().send({ from: contractOwner, gas: GAS });
 
-    expect(event, 'Event was not correct').to.equal('Paused');
+    expect(event, 'Event did not match').to.equal('Paused');
 
     const paused = await pausible.methods.paused().call();
 
@@ -43,7 +43,7 @@ describe('Pausible', () => {
       .unpause()
       .send({ from: contractOwner, gas: GAS });
 
-    expect(event, 'Event was not correct').to.equal('Unpaused');
+    expect(event, 'Event did not match').to.equal('Unpaused');
 
     const paused = await pausible.methods.paused().call();
 
