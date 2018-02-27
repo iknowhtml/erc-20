@@ -26,6 +26,24 @@ contract Token is ERC20 {
     event Approval(address indexed owner, address indexed spender, uint256 value);
 
     /**
+    * @dev Constructor for Token smart contract
+    * @param _name Name of the token.
+    * @param _symbol Symbol for the token.
+    * @param _decimals Decimal places for token
+    * (Note: ensure value does not exceed 255)
+    * @param _supply Intended supply of the token.
+    * (Note: total supply will equal the intended supply (_supply) times the 10^decimals value (_decimal))
+     **/
+    function Token(string _name, string _symbol, uint8 _decimals, uint256 _supply) {
+        name = _name;
+        symbol = _symbol;
+        decimals = _decimals;
+        //IMPORTANT: Double check this value to ensure that the operations does not overflow
+        totalSupply_ = _supply * (10 ** uint256(decimals));
+        balances[msg.sender] = totalSupply_;
+    }
+
+    /**
     * @return The total supply of tokens.
     **/
     function totalSupply() public view returns (uint256) {
