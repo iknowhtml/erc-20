@@ -27,9 +27,24 @@ library Uint256Math {
     * return Result of subtracting b from a.
     **/
     function subtract(uint256 a, uint256 b) internal pure returns (uint256) {
-        // check to insure that the result is not negative (overflow)
+        // check to insure that the result is not negative (would wrap and overflow)
         assert(b <= a);
 
         return a - b;
+    }
+
+    /**
+    * @dev Multiplies two numbers, throws if value overflows.
+    * param a Value to multiply.
+    * param b Value to be multiplied.
+    * return Result of multiplying a by b.
+    **/
+    function multiply(uint256 a, uint256 b) internal pure returns (uint256) {
+        uint256 c = a * b;
+        
+        // check to insure that the result did not overflow.
+        assert(c / b == a);
+
+        return c;
     }
 }
