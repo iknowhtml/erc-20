@@ -3,8 +3,10 @@ pragma solidity ^0.4.19;
 import "./Uint256Math.sol";
 import "./SampleToken.sol";
 
-contract Crowdsale is Ownable{
+
+contract Crowdsale is Ownable {
     using Uint256Math for uint256;
+
     SampleToken public sampleToken;
     uint256 public rate;
     uint256 public weiRaised;
@@ -30,6 +32,8 @@ contract Crowdsale is Ownable{
 
     function _preValidatePurchase(address _buyer) internal;
     function _postValidatePurchase(address _buyer) internal;
+    function _calculateTokenAmount(uint256 wei) internal returns (uint256);
+
 
 
 
