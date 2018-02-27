@@ -32,7 +32,7 @@ contract Crowdsale is Ownable {
 
     function _preValidatePurchase(address _buyer) internal;
     function _postValidatePurchase(address _buyer) internal;
-    function _calculateTokenAmount(uint256 wei) internal returns (uint256);
+    function _calculateTokenAmount(uint256 _wei) internal returns (uint256);
 
 
 
