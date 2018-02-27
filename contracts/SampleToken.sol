@@ -15,13 +15,7 @@ contract SampleToken is Token, Pausible {
     /**
     * @dev Constructor function for Sample Token.
     **/
-    function SampleToken() public {
-        name = NAME;
-        symbol = SYMBOL;
-        decimals = DECIMALS;
-        //IMPORTANT: Double check this value to ensure that the operations does not overflow!
-        totalSupply_ = TOKEN_SUPPLY * (10 ** uint256(decimals));
-        balances[msg.sender] = totalSupply_;
+    function SampleToken() public Token(NAME, SYMBOL, DECIMALS, TOKEN_SUPPLY) {
     }
 
     /**
