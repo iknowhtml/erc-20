@@ -11,30 +11,31 @@ contract Crowdsale is Ownable {
     uint256 public rate;
     uint256 public weiRaised;
 
-    mapping(address => uint256) public allocations;
-
-    modifier crowdSaleIsGoing() {
-        require(block.timestamp >= startTime && block.timestamp < block.timestamp);
-        _;
-    }
-
-    modifier crowdsaleHasEnded() {
-        require(block.timestamp >= endTime);
-        _;
-    }
-
     function() external payable {
-        purchaseTokens(msg.sender);
+        purchaseTokens();
     }
 
-    function purchaseTokens(uint256 _address) public;
-    function claimTokens() public;
+    function claimTokens() external {
 
-    function _preValidatePurchase(address _buyer) internal;
-    function _postValidatePurchase(address _buyer) internal;
-    function _calculateTokenAmount(uint256 _wei) internal returns (uint256);
+    }
 
+    function withdrawlFunds() external {
+        owner.transfer(msg.value);
+    }
 
+    function purchaseTokens() internal {
 
+    }
 
+    function _preValidatePurchase(address _buyer) internal {
+
+    }
+
+    function _postValidatePurchase(address _buyer) internal {
+
+    }
+
+    function _calculateTokenAmount(uint256 _wei) internal view returns (uint256) {
+        return _wei.multiply(rate);
+    }
 }
