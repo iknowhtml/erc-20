@@ -8,7 +8,11 @@ import contractFactory from './contractFactory';
 const tokenName = 'Sample Token';
 const tokenSymbol = 'SAMT';
 const tokenDecimals = '18';
-const tokenTotalSupply = '100000000000000000000';
+const tokenSupply = '100';
+const tokenTotalSupply = (
+  parseInt(tokenSupply) *
+  10 ** parseInt(tokenDecimals)
+).toString();
 
 const GAS = '1000000';
 
@@ -17,7 +21,14 @@ beforeEach(async () => {
   accounts = await web3.eth.getAccounts();
   contractOwner = accounts[0];
 
-  sampleToken = await contractFactory(compiledSampleToken, contractOwner);
+  sampleToken = await contractFactory(
+    compiledSampleToken,
+    contractOwner,
+    tokenName,
+    tokenSymbol,
+    tokenDecimals,
+    tokenSupply,
+  );
 });
 
 describe('Sample Token', () => {
