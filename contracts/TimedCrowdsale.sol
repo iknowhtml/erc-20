@@ -1,11 +1,13 @@
 pragma solidity ^0.4.19;
 
+import "./Crowdsale.sol";
 
-contract TimedCrowdsale {
+
+contract TimedCrowdsale is Crowdsale {
     uint256 public startTime;
     uint256 public endTime;
 
-    function TimedCrowdsale(uint256 _startTime, uint256 _endTime) {
+    function TimedCrowdsale(uint256 _startTime, uint256 _endTime) public {
         startTime = _startTime;
         endTime = _endTime;
     }
