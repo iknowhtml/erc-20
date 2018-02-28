@@ -34,7 +34,7 @@ contract Token is ERC20 {
     * @param _supply Intended supply of the token.
     * (Note: total supply will equal the intended supply (_supply) times the 10^decimals value (_decimal))
      **/
-    function Token(string _name, string _symbol, uint8 _decimals, uint256 _supply) {
+    function Token(string _name, string _symbol, uint8 _decimals, uint256 _supply) public {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
