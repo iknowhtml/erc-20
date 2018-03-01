@@ -19,10 +19,12 @@ contract Crowdsale is Ownable {
     event TokensClaimed(address receiver, uint256 amount);
     event FundsWithdrawn(uint256 amount);
 
-    function() external payable {
-        _purchaseTokens();
-    }
-
+    /**
+    * @dev Contructor function for Crowdsale
+    * @param _tokenAddress Contract address for a ERC-20 token.
+    * @param _rate Rate for how many tokens are allocated per ETH.
+    * NOTE: Be aware that totalSupply is your intended supply multiplied by 10 to the number of decimal places desired.
+    **/
     function Crowdsale(address _tokenAddress, uint256 _rate) public {
         require(_tokenAddress != 0x0);
         require(_rate != 0);
@@ -32,8 +34,22 @@ contract Crowdsale is Ownable {
         rate = _rate;
     }
 
+    /**
+    * @dev Fallback function.
+    * Function called when a contributor wants to allocate tokens to themself by sending ETH to this contracts address.
+    **/
+    function() external payable {
+        _purchaseTokens();
+    }
+
+    /**
+    * @dev Claims and transfers tokens into user's wallet.
+    * @param _amount Amount of tokens the user wishes to claim.
+    * (amount must be less than what the user has purchased)
+    **/
     function claimTokens(uint256 _amount) external {
         require(_amount <= allocations[msg.sender]);
+        require(_amount <= tokens.allowance(address(this));
 
         allocations[msg.sender] = allocations[msg.sender].subtract(_amount);
 
@@ -42,35 +58,58 @@ contract Crowdsale is Ownable {
         TokensClaimed(msg.sender, _amount);
     }
 
-    function withdrawFunds(uint256 amount) public onlyOwner {
-        require(amount <= weiRaised);
-        weiRaised = weiRaised.subtract(amount);
+    /**
+    * @dev Transfers ETH from this contract balance to the owners address.
+    * @param _amount Amount of ETH (in wei) the user wishes to withdraw.
+    **/
+    function withdrawFunds(uint256 _amount) public onlyOwner {
+        require(_amount <= weiRaised);
+        weiRaised = weiRaised.subtract(_amount);
 
-        owner.transfer(amount);
+        owner.transfer(_amount);
 
-        FundsWithdrawn(amount);
+        FundsWithdrawn(_amount);
     }
 
+    /**
+    * @dev Internal function to be called when a contributor wishes to purchase tokens.
+    **/
     function _purchaseTokens() internal {
-        require(msg.value != 0);
-        
         uint256 amount = _calculateTokenAmount(msg.value);
-        require(amount <= tokensAvailable);
+
+        _preValidatePurchase(amount);
 
         tokensAvailable = tokensAvailable.subtract(amount);
+        weiRaised = weiRaised.add(msg.value);
+
         allocations[msg.sender] = allocations[msg.sender].add(amount);
 
         TokensPurchased(msg.sender, amount, allocations[msg.sender]);
     }
 
-    function _preValidatePurchase(address _buyer) internal {
+    /**
+    * @dev Validation function called before purchase.
+    * Extend function in more complex use cases by overriding function and calling super.
+    * @param _tokenAmount amount of tokens a contributor is purchasing.
+    **/
+    function _preValidatePurchase(uint256 _tokenAmount) internal {
+        require(msg.value != 0);
+        require(_tokenAmount <= tokensAvailable);
+    }
+
+    /**
+    * @dev Validation function called after purchase.
+    * Extend function in more complex use cases by overriding function and calling super.
+    * @param _tokenAmount amount of tokens a contributor is purchasing.
+    **/
+    function _postValidatePurchase(uint256 tokenAmount) internal {
 
     }
 
-    function _postValidatePurchase(address _buyer) internal {
-
-    }
-
+    /**
+    * @dev Calculates the amount of tokens based on the amount of wei sent and the rate.
+    * @param Amount of wei user contributes to crowdsale.
+    **/
     function _calculateTokenAmount(uint256 _wei) internal view returns (uint256) {
         return _wei.multiply(rate);
     }
