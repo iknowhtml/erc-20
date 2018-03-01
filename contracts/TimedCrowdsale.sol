@@ -12,7 +12,7 @@ contract TimedCrowdsale is Crowdsale {
         endTime = _endTime;
     }
 
-    modifier crowdSaleIsGoing() {
+    modifier crowdSaleIsOngoing() {
         require(block.timestamp >= startTime && block.timestamp < block.timestamp);
         _;
     }
