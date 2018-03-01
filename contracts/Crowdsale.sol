@@ -9,10 +9,14 @@ contract Crowdsale is Ownable {
     using Uint256Math for uint256;
 
     ERC20 public token;
-    address public tokenAddress;
     uint256 public rate;
     uint256 public weiRaised;
+    uint256 public tokensAvailable;
 
+    mapping(address => uint256) public allocations;
+
+    event TokensPurchased(address purchaser, uint256 amount, uint256 allocation);
+    event TokensClaimed(address receiver, uint256 amount);
     event FundsWithdrawn(uint256 amount);
 
     function() external payable {
@@ -23,12 +27,19 @@ contract Crowdsale is Ownable {
         require(_tokenAddress != 0x0);
         require(_rate != 0);
 
-        tokenAddress = _tokenAddress;
+        token = ERC20(_tokenAddress);
+        tokensAvailable = token.allowance(owner, address(this));
         rate = _rate;
     }
 
-    function claimTokens() external {
+    function claimTokens(uint256 _amount) external {
+        require(_amount <= allocations[msg.sender]);
 
+        allocations[msg.sender] = allocations[msg.sender].subtract(_amount);
+
+        token.transferFrom(address(this), msg.sender, _amount);
+
+        TokensClaimed(msg.sender, _amount);
     }
 
     function withdrawFunds(uint256 amount) public onlyOwner {
@@ -41,7 +52,15 @@ contract Crowdsale is Ownable {
     }
 
     function _purchaseTokens() internal {
+        require(msg.value != 0);
+        
+        uint256 amount = _calculateTokenAmount(msg.value);
+        require(amount <= tokensAvailable);
 
+        tokensAvailable = tokensAvailable.subtract(amount);
+        allocations[msg.sender] = allocations[msg.sender].add(amount);
+
+        TokensPurchased(msg.sender, amount, allocations[msg.sender]);
     }
 
     function _preValidatePurchase(address _buyer) internal {
