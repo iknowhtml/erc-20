@@ -93,12 +93,12 @@ contract Token is ERC20 {
         require(allowances[_from][_to] >= _value);
         // checks that balance in the from address is greater than the transfer value
         require(balances[_from] >= _value);
+        
+        // updates allowances
+        allowances[_from][_to] = allowances[_from][_to].subtract(_value);
 
         balances[_from] = balances[_from].subtract(_value);
         balances[_to] = balances[_to].add(_value);
-
-        // updates allowances
-        allowances[_from][_to] = allowances[_from][_to].subtract(_value);
 
         Transfer(_from, _to, _value);
 
