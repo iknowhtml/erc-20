@@ -1,7 +1,7 @@
 pragma solidity ^0.4.19;
 
 import "./ERC20.sol";
-import "./Uint256Math.sol";
+import "../utilities/Uint256Math.sol";
 
 
 contract Token is ERC20 {
@@ -62,7 +62,7 @@ contract Token is ERC20 {
     * @dev Transfers a certain amount of tokens to an address.
     * @param _to The address of the recipient.
     * @param _value The amount of token to be transferred.
-    * @return Whether the transfer was successful or not.
+    * @return success Whether the transfer was successful or not.
     **/
     function transfer(address _to, uint256 _value) public returns (bool success) {
         // checks that to address isn't the 0x0 address (contract creation address)
@@ -84,7 +84,7 @@ contract Token is ERC20 {
     * @param _from The address of the sender.
     * @param _to The address of the recipient.
     * @param _value The amount of token to be transferred.
-    * @return Whether the transfer was successful or not.
+    * @return success Whether the transfer was successful or not.
     **/
     function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
         // checks that approved address isn't the 0x0 address (contract creation address)
@@ -93,7 +93,7 @@ contract Token is ERC20 {
         require(allowances[_from][_to] >= _value);
         // checks that balance in the from address is greater than the transfer value
         require(balances[_from] >= _value);
-        
+
         // updates allowances
         allowances[_from][_to] = allowances[_from][_to].subtract(_value);
 
@@ -111,7 +111,7 @@ contract Token is ERC20 {
     * https://docs.google.com/document/d/1YLPtQxZu1UAvO9cZ1O2RPXBbT0mooh4DYKjA_jp-RLM/edit#heading=h.gmr6zdg47087
     * @param _spender The address of the account able to transfer the tokens.
     * @param _value The amount of tokens to be approved for transfer.
-    * @return Whether the approval was successful or not.
+    * @return success Whether the approval was successful or not.
     **/
     function approve(address _spender, uint256 _value) public returns (bool success) {
         allowances[msg.sender][_spender] = _value;
@@ -125,7 +125,7 @@ contract Token is ERC20 {
     * @dev Returns the amount of tokens an address can spend from the owner's balance.
     * @param _owner The address of the account owning tokens.
     * @param _spender The address of the account able to transfer the tokens.
-    * @return Amount of remaining tokens allowed to spent.
+    * @return remaining Amount of remaining tokens allowed to spent.
     **/
     function allowance(address _owner, address _spender) public view returns (uint256 remaining) {
         return allowances[_owner][_spender];

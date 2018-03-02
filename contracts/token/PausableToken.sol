@@ -1,7 +1,7 @@
 pragma solidity ^0.4.19;
 
 import "./Token.sol";
-import "./Pausable.sol";
+import "../utilities/Pausable.sol";
 
 
 contract PausableToken is Token, Pausable {
