@@ -25,18 +25,18 @@ contract Crowdsale is Ownable {
     * @param _rate Rate for how many tokens are allocated per ETH.
     * NOTE: Be aware that totalSupply is your intended supply multiplied by 10 to the number of decimal places desired.
     **/
-    function Crowdsale(address _tokenAddress, uint256 _rate) public {
+    function Crowdsale(address _tokenAddress, uint256 _rate, uint256 _tokensAvailable) public {
         require(_tokenAddress != 0x0);
         require(_rate != 0);
 
+        token = ERC20(_tokenAddress);
         rate = _rate;
 
-        token = ERC20(_tokenAddress);
+        uint256 totalSupply = token.totalSupply();
 
-        //crowdsale calls the approve function on behalf of the owner who owns all of the initial tokens for the token sale
-        _tokenAddress.delegatecall(bytes4(keccak256("approve(address, uint256)")), address(this), token.totalSupply());
+        require(_tokensAvailable <= totalSupply);
 
-        tokensAvailable = token.allowance(owner, address(this));
+        tokensAvailable = _tokensAvailable;
     }
 
     /**
@@ -58,7 +58,7 @@ contract Crowdsale is Ownable {
 
         allocations[msg.sender] = allocations[msg.sender].subtract(_amount);
 
-        token.transferFrom(address(this), msg.sender, _amount);
+        token.transfer(msg.sender, _amount);
 
         TokensClaimed(msg.sender, _amount);
     }
@@ -88,6 +88,8 @@ contract Crowdsale is Ownable {
         weiRaised = weiRaised.add(msg.value);
 
         allocations[msg.sender] = allocations[msg.sender].add(amount);
+
+        _postValidatePurchase(amount);
 
         TokensPurchased(msg.sender, amount, allocations[msg.sender]);
     }
