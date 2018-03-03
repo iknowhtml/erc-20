@@ -15,9 +15,9 @@ contract Crowdsale is Ownable {
 
     mapping(address => uint256) public allocations;
 
-    event TokensPurchased(address purchaser, uint256 amount, uint256 allocation);
-    event TokensClaimed(address receiver, uint256 amount);
-    event FundsWithdrawn(uint256 amount);
+    event TokensPurchased(address indexed purchaser, uint256 indexed amount, uint256 indexed allocation);
+    event TokensClaimed(address indexed receiver, uint256 indexed amount);
+    event FundsWithdrawn(uint256 indexed amount);
 
     /**
     * @dev Contructor function for Crowdsale
