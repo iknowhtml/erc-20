@@ -82,7 +82,10 @@ describe('Crowdsale', () => {
     const crowdsaleTokenAmount =
       Number.parseInt(weiContribution) * crowdsaleRate;
     const crowdsaleContributor = accounts[1];
-    const balanceBeforeContribution = web3.eth.getBalance(crowdsaleContributor);
+
+    const balanceBeforeContribution = await web3.eth.getBalance(
+      crowdsaleContributor,
+    );
 
     const tokensAvailableBeforePurchase = await crowdsale.methods
       .tokensAvailable()
@@ -92,6 +95,8 @@ describe('Crowdsale', () => {
       .allocations(crowdsaleContributor)
       .call();
 
+    const weiRaisedBeforePurchase = await crowdsale.methods.weiRaised().call();
+
     await web3.eth.sendTransaction({
       from: crowdsaleContributor,
       to: crowdsaleAddress,
@@ -99,18 +104,74 @@ describe('Crowdsale', () => {
       gas: GAS,
     });
 
+    //checks that the account balance was updated correctly
+    const balanceAfterContribution = await web3.eth.getBalance(
+      crowdsaleContributor,
+    );
+    expect(
+      Number.parseInt(balanceAfterContribution),
+      'Balance did not match',
+    ).to.be.at.most(
+      Number.parseInt(balanceBeforeContribution) -
+        Number.parseInt(weiContribution),
+    );
+
+    //checks that tokens available was updated correctly
     const tokensAvailableAfterPurchase = await crowdsale.methods
       .tokensAvailable()
       .call();
+    expect(
+      tokensAvailableAfterPurchase,
+      'Tokens available did not match',
+    ).to.equal(
+      (
+        Number.parseInt(tokensAvailableBeforePurchase) -
+        Number.parseInt(crowdsaleTokenAmount)
+      ).toString(),
+    );
 
+    //checks that the allocation was updated correctly
     const allocationAfterPurchase = await crowdsale.methods
       .allocations(crowdsaleContributor)
       .call();
-
     expect(allocationAfterPurchase).to.equal(
       (
         Number.parseInt(allocationBeforePurchase) + crowdsaleTokenAmount
       ).toString(),
+    );
+
+    //checks that the wei raised is updated correctly
+    const weiRaisedAfterPurchase = await crowdsale.methods.weiRaised().call();
+    expect(weiRaisedAfterPurchase, 'Wei raised did not match').to.equal(
+      (
+        Number.parseInt(weiRaisedBeforePurchase) +
+        Number.parseInt(weiContribution)
+      ).toString(),
+    );
+
+    const [
+      { topics: [, purchaserHexString, amountHexString, allocationHexString] },
+    ] = await web3.eth.getPastLogs({
+      address: crowdsaleAddress,
+      topics: [
+        web3.utils.keccak256('TokensPurchased(address,uint256,uint256)'),
+      ],
+    });
+
+    const purchaser = web3.utils.toChecksumAddress(
+      purchaserHexString.replace(/0x0*/, '0x'),
+    );
+    const amount = parseInt(amountHexString, 16).toString();
+    const allocation = parseInt(allocationHexString, 16).toString();
+
+    expect(purchaser, 'Contributor address did not match').to.equal(
+      crowdsaleContributor,
+    );
+    expect(amount, 'Amount did not match').to.equal(
+      crowdsaleTokenAmount.toString(),
+    );
+    expect(allocation, 'Allocation did not match').to.equal(
+      allocationAfterPurchase,
     );
   });
 });
