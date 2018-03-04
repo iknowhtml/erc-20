@@ -10,7 +10,7 @@ import contractFactory from './contractFactory';
 const tokenName = 'Sample Token';
 const tokenSymbol = 'SAMT';
 const tokenDecimals = '18';
-const tokenSupply = '100';
+const tokenSupply = '5';
 const totalTokenSupply = (
   parseInt(tokenSupply) *
   10 ** parseInt(tokenDecimals)
@@ -173,5 +173,39 @@ describe('Crowdsale', () => {
     expect(allocation, 'Allocation did not match').to.equal(
       allocationAfterPurchase,
     );
+  });
+
+  it('Should not allow tokens to be purchased when no tokens are available', async () => {
+    const contribution = 5; //ETH
+    const weiContribution = web3.utils.toWei(contribution.toString(), 'ether');
+    let crowdsaleContributor = accounts[2];
+
+    //purchaes all tokens and allocates them to crowdsale contributors address
+    await web3.eth.sendTransaction({
+      from: crowdsaleContributor,
+      to: crowdsaleAddress,
+      value: weiContribution,
+      gas: GAS,
+    });
+
+    //reattempts to purchase all tokens, should fail
+    const { status } = await web3.eth.sendTransaction({
+      from: crowdsaleContributor,
+      to: crowdsaleAddress,
+      value: weiContribution,
+      gas: GAS,
+    });
+
+    expect(status, 'Status did not match').to.equal('0x00');
+
+    const [, undefinedLog] = await web3.eth.getPastLogs({
+      fromBlock: '0x0',
+      address: crowdsaleAddress,
+      topics: [
+        web3.utils.keccak256('TokensPurchased(address,uint256,uint256)'),
+      ],
+    });
+
+    expect(undefinedLog, 'Log was not undefined').to.be.undefined;
   });
 });
