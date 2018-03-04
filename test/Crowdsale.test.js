@@ -175,20 +175,11 @@ describe('Crowdsale', () => {
     );
   });
 
-  it('Should not allow tokens to be purchased when no tokens are available', async () => {
-    const contribution = 5; //ETH
+  it('Should not allow tokens to be purchased than are available', async () => {
+    const contribution = 6; //ETH
     const weiContribution = web3.utils.toWei(contribution.toString(), 'ether');
     let crowdsaleContributor = accounts[2];
 
-    //purchaes all tokens and allocates them to crowdsale contributors address
-    await web3.eth.sendTransaction({
-      from: crowdsaleContributor,
-      to: crowdsaleAddress,
-      value: weiContribution,
-      gas: GAS,
-    });
-
-    //reattempts to purchase all tokens, should fail
     const { status } = await web3.eth.sendTransaction({
       from: crowdsaleContributor,
       to: crowdsaleAddress,
