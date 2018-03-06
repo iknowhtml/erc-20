@@ -76,7 +76,7 @@ describe('Crowdsale', () => {
     );
   });
 
-  it('Should purchase tokens and emit TokensPurchased event', async () => {
+  it('Should allow tokens to be purchased and emit a TokensPurchased event', async () => {
     const contribution = 1; //ETH
     const weiContribution = web3.utils.toWei(contribution.toString(), 'ether');
     const crowdsaleTokenAmount =
@@ -198,5 +198,39 @@ describe('Crowdsale', () => {
     });
 
     expect(undefinedLog, 'Log was not undefined').to.be.undefined;
+  });
+
+  it('Should allow purchased tokens to be claimed and emit a TokensClaimed event', async () => {
+    const contribution = 1; //ETH
+    const weiContribution = web3.utils.toWei(contribution.toString(), 'ether');
+    const crowdsaleTokenAmount =
+      Number.parseInt(weiContribution) * crowdsaleRate;
+    const crowdsaleContributor = accounts[1];
+
+    await web3.eth.sendTransaction({
+      from: crowdsaleContributor,
+      to: crowdsaleAddress,
+      value: weiContribution,
+      gas: GAS,
+    });
+
+    const {
+      events: { TokensClaimed: { returnValues: { receiver, amount } } },
+    } = await crowdsale.methods
+      .claimTokens(crowdsaleTokenAmount)
+      .send({ from: crowdsaleContributor, gas: GAS });
+    expect(receiver, 'Claimer address did not match').to.equal(
+      crowdsaleContributor,
+    );
+    expect(amount, 'Claimed amount did not match').to.equal(
+      crowdsaleTokenAmount.toString(),
+    );
+
+    const balance = await sampleToken.methods
+      .balanceOf(crowdsaleContributor)
+      .call();
+    expect(balance, 'Claimer balance did not match').to.equal(
+      crowdsaleTokenAmount.toString(),
+    );
   });
 });
