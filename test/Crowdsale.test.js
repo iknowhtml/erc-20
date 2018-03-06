@@ -266,4 +266,34 @@ describe('Crowdsale', () => {
       .call();
     expect(balance, 'Claimer balance did not match').to.equal('0');
   });
+
+  it('Should allow contract owner to withdraw ETH from the crowdsale', async () => {
+    const contribution = 1; //ETH
+    const weiContribution = web3.utils.toWei(contribution.toString(), 'ether');
+    const crowdsaleTokenAmount =
+      Number.parseInt(weiContribution) * crowdsaleRate;
+    const crowdsaleContributor = accounts[1];
+
+    await web3.eth.sendTransaction({
+      from: crowdsaleContributor,
+      to: crowdsaleAddress,
+      value: weiContribution,
+      gas: GAS,
+    });
+
+    const balanceBeforeWithdrawl = await web3.eth.getBalance(contractOwner);
+
+    const {
+      events: { FundsWithdrawn: { returnValues: { amount } } },
+    } = await crowdsale.methods
+      .withdrawFunds(weiContribution)
+      .send({ from: contractOwner, gas: GAS });
+    expect(amount, 'Withdrawn amount did not match').to.equal(weiContribution);
+
+    const balanceAfterWithdrawl = await web3.eth.getBalance(contractOwner);
+
+    expect(parseInt(balanceAfterWithdrawl))
+      .to.be.least(parseInt(balanceBeforeWithdrawl) - parseInt(weiContribution))
+      .and.to.be.greaterThan(parseInt(balanceBeforeWithdrawl));
+  });
 });
