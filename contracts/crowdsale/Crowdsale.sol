@@ -32,9 +32,7 @@ contract Crowdsale is Ownable {
         token = ERC20(_tokenAddress);
         rate = _rate;
 
-        uint256 totalSupply = token.totalSupply();
-
-        require(_tokensAvailable <= totalSupply);
+        require(_tokensAvailable <= token.totalSupply());
 
         tokensAvailable = _tokensAvailable;
     }
@@ -54,7 +52,6 @@ contract Crowdsale is Ownable {
     **/
     function claimTokens(uint256 _amount) external {
         require(_amount <= allocations[msg.sender]);
-        require(_amount <= token.allowance(owner, address(this)));
 
         allocations[msg.sender] = allocations[msg.sender].subtract(_amount);
 
