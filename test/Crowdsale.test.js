@@ -233,4 +233,37 @@ describe('Crowdsale', () => {
       crowdsaleTokenAmount.toString(),
     );
   });
+
+  it('Should not allow more tokens to be claimed than purchased', async () => {
+    const contribution = 1; //ETH
+    const weiContribution = web3.utils.toWei(contribution.toString(), 'ether');
+    const crowdsaleTokenAmount =
+      Number.parseInt(weiContribution) * crowdsaleRate;
+    const crowdsaleContributor = accounts[1];
+
+    await web3.eth.sendTransaction({
+      from: crowdsaleContributor,
+      to: crowdsaleAddress,
+      value: weiContribution,
+      gas: GAS,
+    });
+
+    const BN_CONST_1 = web3.utils.toBN(1);
+
+    const claimTokenAmount = web3.utils
+      .toBN(crowdsaleTokenAmount)
+      .add(BN_CONST_1)
+      .toString();
+
+    const { status } = await crowdsale.methods
+      .claimTokens(claimTokenAmount)
+      .send({ from: crowdsaleContributor, gas: GAS });
+
+    expect(status, 'Status did not match').to.equal('0x00');
+
+    const balance = await sampleToken.methods
+      .balanceOf(crowdsaleContributor)
+      .call();
+    expect(balance, 'Claimer balance did not match').to.equal('0');
+  });
 });
