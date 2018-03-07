@@ -20,6 +20,8 @@ const totalTokenSupply = (
 const crowdsaleRate = '1';
 
 const GAS = '1000000';
+const GAS_PRICE_GWEI = '20';
+const GAS_PRICE = web3.utils.toWei(GAS_PRICE_GWEI, 'gwei');
 
 let accounts,
   sampleToken,
@@ -287,13 +289,62 @@ describe('Crowdsale', () => {
       events: { FundsWithdrawn: { returnValues: { amount } } },
     } = await crowdsale.methods
       .withdrawFunds(weiContribution)
-      .send({ from: contractOwner, gas: GAS });
+      .send({ from: contractOwner, gas: GAS, gasPrice: GAS_PRICE });
+
     expect(amount, 'Withdrawn amount did not match').to.equal(weiContribution);
 
     const balanceAfterWithdrawl = await web3.eth.getBalance(contractOwner);
 
-    expect(parseInt(balanceAfterWithdrawl))
-      .to.be.least(parseInt(balanceBeforeWithdrawl) - parseInt(weiContribution))
+    expect(
+      parseInt(balanceAfterWithdrawl),
+      'Balance of contract owner did not match',
+    )
+      .to.be.least(
+        parseInt(balanceBeforeWithdrawl) -
+          parseInt(weiContribution) -
+          parseInt(GAS) * parseInt(GAS_PRICE),
+      )
       .and.to.be.greaterThan(parseInt(balanceBeforeWithdrawl));
+  });
+
+  it('Should not allow contract owner to withdraw more ETH from the crowdsale than was contributed', async () => {
+    const contribution = 1; //ETH
+    const weiContribution = web3.utils.toWei(contribution.toString(), 'ether');
+    const crowdsaleContributor = accounts[1];
+
+    await web3.eth.sendTransaction({
+      from: crowdsaleContributor,
+      to: crowdsaleAddress,
+      value: weiContribution,
+      gas: GAS,
+    });
+
+    const weiRaisedBeforeWithdrawl = await crowdsale.methods.weiRaised().call();
+    const balanceBeforeWithdrawl = await web3.eth.getBalance(contractOwner);
+
+    const BN_CONST_1 = web3.utils.toBN(1);
+
+    const withdrawAmount = web3.utils
+      .toBN(weiContribution)
+      .add(BN_CONST_1)
+      .toString();
+
+    const { status } = await crowdsale.methods
+      .withdrawFunds(withdrawAmount)
+      .send({ from: contractOwner, gas: GAS });
+
+    expect(status, 'Status did not match').to.equal('0x00');
+
+    const weiRaisedAfterWithdrawl = await crowdsale.methods.weiRaised().call();
+    const balanceAfterWithdrawl = await web3.eth.getBalance(contractOwner);
+
+    expect(weiRaisedAfterWithdrawl, 'Wei raised did not match').to.equal(
+      weiRaisedBeforeWithdrawl,
+    );
+    expect(parseInt(balanceAfterWithdrawl), 'Balance of contract owner ')
+      .to.be.at.most(parseInt(balanceBeforeWithdrawl))
+      .and.to.be.at.least(
+        parseInt(balanceBeforeWithdrawl) - parseInt(GAS) * parseInt(GAS_PRICE),
+      );
   });
 });
