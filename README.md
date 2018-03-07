@@ -41,3 +41,8 @@ yarn deploy --network ganache
 Additional networks can be added by modifying the `truffle.js` file in the root directory.
 
 **NOTE:** Please make sure you have [Ganache](http://truffleframework.com/ganache/) before running tests or deploying to the `ganache` network.
+
+**TO DO:**
+
+* Implement Timed Crowdsale
+* Test Timed Crowdsale
