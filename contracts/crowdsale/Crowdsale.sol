@@ -28,11 +28,10 @@ contract Crowdsale is Ownable {
     function Crowdsale(address _tokenAddress, uint256 _rate, uint256 _tokensAvailable) public {
         require(_tokenAddress != 0x0);
         require(_rate != 0);
+        require(_tokensAvailable <= token.totalSupply());
 
         token = ERC20(_tokenAddress);
         rate = _rate;
-
-        require(_tokensAvailable <= token.totalSupply());
 
         tokensAvailable = _tokensAvailable;
     }
