@@ -1,12 +1,23 @@
 const fs = require('fs');
 const path = require('path');
 
-const Token = artifacts.require('./SampleToken.sol');
+const SampleToken = artifacts.require('./SampleToken.sol');
+
+const tokenName = 'Sample Token';
+const tokenSymbol = 'SAMT';
+const tokenDecimals = '18';
+const tokenSupply = '100';
 
 module.exports = async deployer => {
-  await deployer.deploy(Token);
+  await deployer.deploy(
+    SampleToken,
+    tokenName,
+    tokenSymbol,
+    tokenDecimals,
+    tokenSupply,
+  );
 
-  const { address } = Token;
+  const { address } = SampleToken;
   let deployment = {};
 
   deployment.sampleTokenAddress = address;
